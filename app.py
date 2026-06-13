@@ -21,7 +21,7 @@ Dense.from_config = fixed_from_config
 @st.cache_resource
 def load_my_model():
     return load_model(
-        "mobilenetv2_model.keras",
+        "final_alzheimer_classifier.keras",
         compile=False,
         safe_mode=False
     )
