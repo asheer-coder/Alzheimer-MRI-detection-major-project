@@ -28,12 +28,13 @@ def load_my_model():
 
 model = load_my_model()
 
-# ===== CLASS NAMES =====
+# ===== 4 CLASS NAMES =====
 
 class_names = [
-    "ModerateDemented",
     "MildDemented",
-    "NonDemented"
+    "ModerateDemented",
+    "NonDemented",
+    "VeryMildDemented"
 ]
 
 # ===== TITLE =====
@@ -59,38 +60,49 @@ if uploaded_file is not None:
         use_container_width=True
     )
 
+    # Resize image
     img = img.resize((224, 224))
 
+    # Convert to numpy array
     img_array = np.array(img)
 
+    # Normalize
     img_array = img_array / 255.0
 
+    # Add batch dimension
     img_array = np.expand_dims(img_array, axis=0)
 
+    # Predict
     prediction = model.predict(img_array)
 
-    predicted_class = class_names[np.argmax(prediction)]
+    # Debug Information
+    st.write("Prediction Shape:", prediction.shape)
+    st.write("Prediction Values:", prediction)
 
-    confidence = np.max(prediction) * 100
+    predicted_index = np.argmax(prediction)
 
-    st.subheader("Prediction Result")
+    # Safety Check
+    if predicted_index >= len(class_names):
+        st.error(
+            f"Model returned class index {predicted_index}, "
+            f"but class_names contains only {len(class_names)} classes."
+        )
+    else:
 
-    st.success(f"Prediction: {predicted_class}")
+        predicted_class = class_names[predicted_index]
 
-    st.write(f"Confidence: {confidence:.2f}%")
+        confidence = np.max(prediction) * 100
 
-    st.subheader("Class Probabilities")
+        st.subheader("Prediction Result")
 
-    for i, prob in enumerate(prediction[0]):
-        st.write(f"{class_names[i]} : {prob*100:.2f}%")
-# py -3.10 -m streamlit run app.py
-#cd "E:\MAJOR PROJECT\Alzheimer_Web_App"
+        st.success(f"Prediction: {predicted_class}")
 
-#
-# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+        st.write(f"Confidence: {confidence:.2f}%")
 
-#
-# .\.venv\Scripts\Activate.ps1
+        st.subheader("Class Probabilities")
 
-#
-# py -3.10 -m streamlit run app.py
+        for i, prob in enumerate(prediction[0]):
+            if i < len(class_names):
+                st.write(
+                    f"{class_names[i]} : {prob * 100:.2f}%"
+                )
