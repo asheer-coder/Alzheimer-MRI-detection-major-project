@@ -58,12 +58,14 @@ if uploaded_file is not None:
         use_container_width=True
     )
 
-    img = img.resize((160, 160))
-    img_array = np.array(img)
-    img_array = img_array / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img = Image.open(uploaded_file)
+img = img.convert("RGB")
+img = img.resize((160, 160))
 
-    prediction = model.predict(img_array)
+img_array = np.array(img) / 255.0
+img_array = np.expand_dims(img_array, axis=0)
+
+prediction = model.predict(img_array)
 
     predicted_index = np.argmax(prediction)
 
