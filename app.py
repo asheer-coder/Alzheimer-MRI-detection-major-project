@@ -58,7 +58,7 @@ if uploaded_file is not None:
         use_container_width=True
     )
 
-    img = img.resize((224, 224))
+    img = img.resize((160, 160))
     img_array = np.array(img)
     img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
